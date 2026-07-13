@@ -203,6 +203,7 @@ export function ChangesPanel({
             className={`list-item tree-dir${node.name.startsWith('.') || node.ignored ? ' hidden-entry' : ''}`}
             style={{ paddingLeft: 8 + depth * 14 }}
             onClick={() => toggle(node.path)}
+            onContextMenu={(e) => showContextMenu(e, node.path)}
             role="button"
             tabIndex={0}
             onKeyDown={(e) => {
