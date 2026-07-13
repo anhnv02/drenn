@@ -1,0 +1,132 @@
+.terminal-panel {
+  height: 250px;
+  background: var(--aw-panel-bg);
+  border-top: 1px solid var(--aw-border);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.terminal-maximized {
+  flex: 1;
+  height: auto;
+}
+
+.terminal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  border-bottom: 1px solid var(--aw-border);
+  flex-shrink: 0;
+  height: 36px;
+}
+
+.terminal-tabs {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.terminal-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: var(--aw-radius-sm);
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--aw-fg-muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.terminal-tab:hover {
+  background: var(--aw-hover-bg);
+  color: var(--aw-fg);
+}
+
+.terminal-tab.active {
+  background: var(--aw-hover-bg);
+  color: var(--aw-fg);
+}
+
+.terminal-tab-name {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.terminal-tab-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border: none;
+  background: none;
+  padding: 0;
+  border-radius: var(--aw-radius-sm);
+  color: var(--aw-fg-muted);
+  cursor: pointer;
+  opacity: 0;
+}
+
+.terminal-tab:hover .terminal-tab-close,
+.terminal-tab.active .terminal-tab-close {
+  opacity: 1;
+}
+
+.terminal-tab-close:hover {
+  background: var(--aw-hover-bg);
+  color: var(--aw-fg);
+}
+
+.terminal-tab-add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: none;
+  padding: 0;
+  border-radius: var(--aw-radius-sm);
+  color: var(--aw-fg-muted);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.terminal-tab-add:hover {
+  background: var(--aw-hover-bg);
+  color: var(--aw-fg);
+}
+
+.terminal-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.terminal-body {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.terminal-instance {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 4px;
+}
+
+.terminal-instance .xterm {
+  height: 100%;
+}

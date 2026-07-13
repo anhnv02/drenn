@@ -1,0 +1,79 @@
+.diff-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.diff-card {
+  width: 88vw;
+  height: 82vh;
+  background: var(--aw-panel-bg);
+  border: 1px solid var(--aw-border);
+  border-radius: var(--aw-radius-lg);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.diff-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--aw-border);
+  font-size: 12px;
+}
+
+.diff-card-name {
+  font-weight: 600;
+}
+
+.diff-card-dir {
+  color: var(--aw-fg-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.diff-source-badge {
+  font-size: 10px;
+  color: var(--aw-fg-muted);
+  border: 1px solid var(--aw-border);
+  border-radius: var(--aw-radius-lg);
+  padding: 1px 7px;
+  white-space: nowrap;
+  cursor: default;
+}
+
+.diff-card-nav {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.diff-layout-toggle {
+  white-space: nowrap;
+}
+
+.diff-card-count {
+  font-size: 11px;
+  color: var(--aw-fg-muted);
+  white-space: nowrap;
+}
+
+.diff-card-body {
+  flex: 1;
+  min-height: 0;
+}
+
+.diff-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}

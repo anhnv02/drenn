@@ -1,0 +1,28 @@
+.context-menu {
+  position: fixed;
+  z-index: 1000;
+  background: var(--aw-panel-bg);
+  border: 1px solid var(--aw-border);
+  border-radius: var(--aw-radius-md);
+  padding: 4px 0;
+  min-width: 180px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.context-menu-item {
+  padding: 6px 16px;
+  font-size: 12px;
+  color: var(--aw-fg);
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.context-menu-item:hover:not(.disabled) {
+  background: var(--aw-hover-bg);
+}
+
+.context-menu-item.disabled {
+  opacity: 0.4;
+  cursor: default;
+}

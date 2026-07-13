@@ -1,0 +1,232 @@
+:root {
+  --aw-bg: #1e1e1e;
+  --aw-sidebar-bg: #1c1c1c;
+  --aw-panel-bg: #191919;
+  --aw-fg: #cccccc;
+  --aw-fg-muted: rgba(204, 204, 204, 0.65);
+  --aw-border: #2d2d2d;
+  /* Brand purple, sampled from the app icon — the one accent color; every
+     other purple/tint in the app should reference this, not a fresh hex. */
+  --aw-accent: #6b5b95;
+  --aw-accent-hover: #5a4a84;
+  --aw-danger: #8b3a3a;
+  --aw-danger-hover: #7a3232;
+
+  --aw-hover-bg: rgba(255, 255, 255, 0.06);
+  --aw-active-bg: color-mix(in srgb, var(--aw-accent) 18%, transparent);
+  --aw-active-fg: #ffffff;
+
+  --aw-added: #3fb950;
+  --aw-removed: #f85149;
+  --aw-modified: #58a6ff;
+
+  --aw-button-bg: var(--aw-accent);
+  --aw-button-fg: #ffffff;
+  --aw-button-hover-bg: var(--aw-accent-hover);
+  --aw-button-secondary-bg: #3a3d41;
+  --aw-button-secondary-fg: var(--aw-fg);
+  --aw-button-secondary-hover-bg: #46494e;
+
+  --aw-input-bg: #2a2a2a;
+  --aw-input-border: #3c3c3c;
+  --aw-code-bg: rgba(255, 255, 255, 0.08);
+
+  --aw-radius-sm: 4px;
+  --aw-radius-md: 6px;
+  --aw-radius-lg: 8px;
+
+  --aw-titlebar-height: 40px;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 13px;
+  color: var(--aw-fg);
+  background: var(--aw-bg);
+  overflow: hidden;
+}
+
+#root {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+button {
+  font-family: inherit;
+  font-size: inherit;
+  cursor: pointer;
+}
+
+/* ── Text buttons ─────────────────────────────────────────────────────── */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border: none;
+  background: var(--aw-button-bg);
+  color: var(--aw-button-fg);
+  border-radius: var(--aw-radius-sm);
+  font-size: 12px;
+  font-weight: 500;
+  height: 28px;
+  padding: 0 12px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.btn:hover:not(:disabled) {
+  background: var(--aw-button-hover-bg);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.btn-secondary {
+  background: var(--aw-button-secondary-bg);
+  color: var(--aw-button-secondary-fg);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--aw-button-secondary-hover-bg);
+}
+
+.btn-sm {
+  height: 26px;
+  padding: 0 10px;
+  font-size: 11px;
+  gap: 4px;
+}
+
+/* ── Icon buttons ─────────────────────────────────────────────────────── */
+
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border-radius: var(--aw-radius-sm);
+  color: var(--aw-fg-muted);
+  font-size: 12px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition:
+    background 0.12s ease,
+    color 0.12s ease;
+}
+
+.icon-btn:hover:not(:disabled) {
+  background: var(--aw-hover-bg);
+  color: var(--aw-fg);
+}
+
+.icon-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.icon-btn-sm {
+  width: 20px;
+  height: 20px;
+  font-size: 11px;
+}
+
+.stat-added {
+  color: var(--aw-added);
+}
+
+.stat-removed {
+  color: var(--aw-removed);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: var(--aw-radius-sm);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.badge-M {
+  color: var(--aw-modified);
+}
+
+.badge-A {
+  color: var(--aw-added);
+}
+
+.badge-D {
+  color: var(--aw-removed);
+}
+
+.list-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  cursor: pointer;
+  border-radius: var(--aw-radius-sm);
+}
+
+.list-item:hover {
+  background: var(--aw-hover-bg);
+}
+
+.list-item.active {
+  background: var(--aw-active-bg);
+  color: var(--aw-active-fg);
+}
+
+.section-title {
+  padding: 8px 12px 4px;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--aw-fg-muted);
+  letter-spacing: 0.04em;
+}
+
+code,
+pre {
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+  background: var(--aw-code-bg);
+  border-radius: var(--aw-radius-sm);
+}
+
+code {
+  padding: 1px 4px;
+}
+
+pre {
+  padding: 8px 10px;
+  overflow-x: auto;
+  margin: 6px 0;
+}
+
+pre code {
+  padding: 0;
+  background: none;
+}

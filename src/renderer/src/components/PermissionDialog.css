@@ -1,0 +1,245 @@
+.permission-inline {
+  padding: 10px 12px;
+  background: var(--aw-panel-bg);
+  border-radius: var(--aw-radius-md);
+  margin: 4px 0;
+}
+
+.permission-inline-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.permission-inline-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--aw-radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--aw-bg);
+  flex-shrink: 0;
+}
+
+.permission-inline-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.permission-inline-tool {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--aw-fg);
+}
+
+.permission-inline-desc {
+  font-size: 11px;
+  color: var(--aw-fg-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.permission-inline-warning {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+  padding: 4px 8px;
+  border-radius: var(--aw-radius-sm);
+  background: rgba(229, 153, 53, 0.15);
+  border: 1px solid rgba(229, 153, 53, 0.4);
+  color: #e59935;
+  font-size: 11px;
+}
+
+.permission-inline-path {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+  font-size: 11px;
+  color: var(--aw-fg-muted);
+  font-family: monospace;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.permission-inline-diff {
+  background: var(--aw-panel-bg);
+  border: 1px solid var(--aw-border);
+  border-radius: var(--aw-radius-sm);
+  padding: 8px;
+  margin: 0 0 8px;
+  font-family: monospace;
+  font-size: 11px;
+  line-height: 1.4;
+  max-height: 120px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  color: var(--aw-fg);
+}
+
+.permission-inline-footer {
+  display: flex;
+  flex-direction: row;
+  gap: 6px;
+  justify-content: end;
+}
+
+.permission-inline-footer-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.permission-inline-footer-row--deny {
+  justify-content: flex-end;
+}
+
+.permission-inline-footer-row--allow {
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* Allow split button: "Allow" + caret opening the "always allow" dropdown */
+.permission-allow-split {
+  position: relative;
+  display: flex;
+}
+
+.permission-btn-allow-main {
+  border-radius: var(--aw-radius-sm) 0 0 var(--aw-radius-sm);
+}
+
+.permission-btn-allow-caret {
+  border-radius: 0 var(--aw-radius-sm) var(--aw-radius-sm) 0;
+  border-left: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0 6px;
+}
+
+.permission-allow-menu {
+  position: absolute;
+  bottom: calc(100% + 4px);
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  min-width: 200px;
+  max-width: min(320px, 80vw);
+  background: var(--aw-panel-bg);
+  border: 1px solid var(--aw-border);
+  border-radius: var(--aw-radius-sm);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  padding: 4px;
+  gap: 2px;
+  z-index: 20;
+}
+
+.permission-allow-menu-item {
+  background: transparent;
+  border: none;
+  color: var(--aw-fg);
+  font-size: 11px;
+  text-align: left;
+  padding: 6px 8px;
+  border-radius: var(--aw-radius-sm);
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.permission-allow-menu-item:hover {
+  background: var(--aw-hover-bg);
+}
+
+.permission-inline-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.permission-btn-deny {
+  font-size: 12px;
+  background: var(--aw-button-secondary-bg);
+  color: var(--aw-fg);
+}
+
+.permission-btn-deny:hover {
+  background: var(--aw-button-secondary-hover-bg);
+}
+
+.permission-btn-allow {
+  font-size: 12px;
+  background: var(--aw-accent);
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.permission-btn-allow:hover {
+  background: var(--aw-accent-hover);
+}
+
+/* Plan approval (exit_plan): scrollable rendered plan */
+.permission-plan {
+  border: 1px solid var(--aw-border);
+  border-radius: var(--aw-radius-sm);
+  padding: 8px 10px;
+  margin: 0 0 8px;
+  max-height: 260px;
+  overflow-y: auto;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--aw-fg);
+}
+
+.permission-btn-allow.permission-btn-secondary {
+  background: var(--aw-button-secondary-bg);
+  color: var(--aw-fg);
+}
+
+.permission-btn-allow.permission-btn-secondary:hover {
+  background: var(--aw-button-secondary-hover-bg);
+}
+
+/* Deny-with-feedback ("tell the agent what to do instead") */
+.permission-feedback {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.permission-feedback-input {
+  width: 100%;
+  resize: vertical;
+  background: var(--aw-input-bg, var(--aw-bg));
+  border: 1px solid var(--aw-border);
+  border-radius: var(--aw-radius-sm);
+  color: var(--aw-fg);
+  font-size: 12px;
+  font-family: inherit;
+  padding: 6px 8px;
+  outline: none;
+}
+
+.permission-feedback-input:focus {
+  border-color: var(--aw-accent);
+}
+
+.permission-feedback .permission-inline-actions {
+  justify-content: flex-end;
+}
+
+.permission-btn-deny-confirm {
+  background: var(--aw-danger);
+  color: white;
+}
+
+.permission-btn-deny-confirm:hover {
+  background: var(--aw-danger-hover);
+}

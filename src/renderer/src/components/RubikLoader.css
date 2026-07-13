@@ -1,0 +1,56 @@
+.rubik-loader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0 14px; /* bottom room so falling cells don't overlap the next row */
+}
+
+.rubik-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 2.5px);
+  grid-template-rows: repeat(2, 2.5px);
+  gap: 1.5px;
+  flex-shrink: 0;
+}
+
+/* Duration = 9 cells x stagger (0.28s) so exactly one cell is falling at a
+   time; each cell's animation-delay (set inline) picks its turn. */
+.rubik-cell {
+  width: 2.5px;
+  height: 2.5px;
+  border-radius: 0.5px;
+  animation: rubik-cell-fall 2.52s linear infinite;
+}
+
+@keyframes rubik-cell-fall {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  11% {
+    transform: translateY(13px);
+    opacity: 0;
+  }
+  12% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.rubik-label {
+  color: var(--aw-fg-muted);
+  font-size: 13px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rubik-cell {
+    animation: none;
+  }
+}

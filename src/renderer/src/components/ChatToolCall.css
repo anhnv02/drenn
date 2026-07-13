@@ -1,0 +1,145 @@
+.tool-call {
+  margin: 4px 0;
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.tool-call-head {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  overflow-wrap: anywhere;
+}
+
+.tool-call-dot {
+  flex-shrink: 0;
+  font-size: 9px;
+  line-height: 1;
+  position: relative;
+  top: -1px;
+  color: var(--aw-added);
+}
+
+.tool-call-dot.error {
+  color: var(--aw-removed);
+}
+
+.tool-call-dot.running {
+  color: var(--aw-fg-muted);
+  animation: tool-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes tool-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.tool-call-name {
+  flex-shrink: 0;
+  white-space: nowrap;
+  color: var(--aw-fg);
+  font-weight: 600;
+}
+
+.tool-call-arg {
+  color: var(--aw-fg-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.tool-call-result {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  padding-left: 4px;
+  color: var(--aw-fg-muted);
+}
+
+.tool-call-result.clickable {
+  cursor: pointer;
+}
+
+.tool-call-result.clickable:hover .tool-call-summary {
+  color: var(--aw-fg);
+}
+
+.tool-call-result.error .tool-call-summary {
+  color: var(--aw-removed);
+}
+
+.tool-call-branch {
+  flex-shrink: 0;
+  color: var(--aw-border);
+  position: relative;
+  top: 1px;
+}
+
+.tool-call-summary {
+  overflow-wrap: anywhere;
+}
+
+.tool-call-summary.running {
+  font-style: italic;
+}
+
+.tool-call-toggle {
+  flex-shrink: 0;
+  margin-left: 4px;
+  font-size: 11px;
+  color: var(--aw-accent);
+  opacity: 0.75;
+}
+
+.tool-call-result.clickable:hover .tool-call-toggle {
+  opacity: 1;
+}
+
+.tool-call-body {
+  margin: 4px 0 6px 14px;
+  padding: 8px 10px;
+  background: var(--aw-code-bg);
+  border-radius: var(--aw-radius-sm);
+  max-height: 320px;
+  overflow: auto;
+  color: var(--aw-fg);
+}
+
+.tool-call-body.error {
+  color: var(--aw-removed);
+}
+
+.tool-call-body-text {
+  white-space: pre;
+}
+
+.tool-call-substeps {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-bottom: 6px;
+}
+
+.tool-call-substeps:last-child {
+  margin-bottom: 0;
+}
+
+.tool-call-substep {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  overflow-wrap: anywhere;
+  color: var(--aw-fg-muted);
+}
+
+.tool-call-substep-summary {
+  color: var(--aw-fg-muted);
+  overflow-wrap: anywhere;
+}

@@ -1,0 +1,77 @@
+.titlebar {
+  height: var(--aw-titlebar-height);
+  display: flex;
+  align-items: center;
+  background: var(--aw-panel-bg);
+  border-bottom: 1px solid var(--aw-border);
+  -webkit-app-region: drag;
+  flex-shrink: 0;
+}
+
+.titlebar-traffic-light-spacer {
+  width: 78px;
+  flex-shrink: 0;
+}
+
+.titlebar-nav {
+  display: flex;
+  gap: 2px;
+  -webkit-app-region: no-drag;
+}
+
+.titlebar-center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  min-width: 0;
+}
+
+.titlebar-pill {
+  -webkit-app-region: no-drag;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 480px;
+  padding: 4px 14px;
+  border-radius: var(--aw-radius-md);
+  background: var(--aw-input-bg);
+  border: 1px solid var(--aw-input-border);
+  font-size: 12px;
+  color: var(--aw-fg);
+}
+
+.titlebar-pill-icon {
+  color: var(--aw-accent);
+  font-size: 12px;
+}
+
+.titlebar-pill-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.titlebar-pill-placeholder {
+  color: var(--aw-fg-muted);
+}
+
+.titlebar-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 12px;
+  -webkit-app-region: no-drag;
+}
+
+.titlebar-icon-btn {
+  font-size: 13px;
+}
+
+.titlebar-icon-btn.active {
+  color: var(--aw-fg-muted);
+  background: var(--aw-hover-bg);
+}
+
+.titlebar-icon-btn.active:hover {
+  color: var(--aw-fg);
+}

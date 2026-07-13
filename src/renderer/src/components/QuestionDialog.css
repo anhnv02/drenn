@@ -1,0 +1,116 @@
+.question-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.question-dialog {
+  background: var(--aw-panel-bg);
+  border: 1px solid var(--aw-border);
+  border-radius: var(--aw-radius-lg);
+  width: 480px;
+  max-width: 90vw;
+  max-height: 80vh;
+  overflow: hidden;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+}
+
+.question-header {
+  padding: 16px;
+  border-bottom: 1px solid var(--aw-border);
+}
+
+.question-header h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--aw-fg);
+}
+
+.question-body {
+  padding: 16px;
+  overflow-y: auto;
+  max-height: 60vh;
+}
+
+.question-text {
+  margin: 0 0 16px;
+  color: var(--aw-fg);
+  line-height: 1.5;
+}
+
+.question-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.question-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--aw-border);
+  border-radius: var(--aw-radius-md);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.question-option:hover {
+  border-color: var(--aw-accent);
+  background: color-mix(in srgb, var(--aw-accent) 10%, transparent);
+}
+
+.question-option.selected {
+  border-color: var(--aw-accent);
+  background: color-mix(in srgb, var(--aw-accent) 15%, transparent);
+}
+
+.question-option input {
+  margin-top: 4px;
+}
+
+.option-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.option-label {
+  font-size: 14px;
+  color: var(--aw-fg);
+  font-weight: 500;
+}
+
+.option-description {
+  font-size: 12px;
+  color: var(--aw-fg-muted);
+}
+
+.question-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px;
+  border-top: 1px solid var(--aw-border);
+}
+
+.btn-submit {
+  background: var(--aw-accent);
+  color: white;
+}
+
+.btn-submit:hover:not(:disabled) {
+  background: var(--aw-accent-hover);
+}
+
+.btn-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
