@@ -34,6 +34,7 @@ import {
 } from './session/continuations';
 import { getDiffFor, getUncommittedChanges, languageFor, listFilesFor } from './git';
 import { readProviders, writeProviders } from './config/providerStore';
+import { getTodos } from './tools/todowrite';
 import {
   readSelectedModel,
   writeSelectedModel,
@@ -736,4 +737,6 @@ export function registerIpcHandlers(): void {
     }
     return { path: result.filePaths[0], cancelled: false };
   });
+
+  ipcMain.handle(IPC.todosGet, (_event, sessionId: string) => ({ todos: getTodos(sessionId) }));
 }

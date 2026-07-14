@@ -1,0 +1,134 @@
+.todo-list {
+  background: var(--aw-input-bg);
+  border-bottom: 1px solid var(--aw-border);
+  flex-shrink: 0;
+  max-height: 200px;
+  display: flex;
+  flex-direction: column;
+}
+
+.todo-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 16px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.todo-header:hover {
+  background: var(--aw-hover-bg);
+}
+
+.todo-header-icon {
+  color: var(--aw-accent);
+}
+
+.todo-header-title {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--aw-fg);
+}
+
+.todo-header-stats {
+  font-size: 11px;
+  color: var(--aw-fg-muted);
+  flex: 1;
+}
+
+.todo-collapse-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: none;
+  background: none;
+  color: var(--aw-fg-muted);
+  cursor: pointer;
+  border-radius: var(--aw-radius-sm);
+  padding: 0;
+}
+
+.todo-collapse-btn:hover {
+  background: var(--aw-hover-bg);
+  color: var(--aw-fg);
+}
+
+.todo-items {
+  overflow-y: auto;
+  padding: 0 16px 8px;
+  max-height: 160px;
+}
+
+.todo-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 4px 0;
+  font-size: 12px;
+}
+
+.todo-item-status {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.todo-icon-completed {
+  color: var(--aw-added);
+}
+
+.todo-icon-progress {
+  color: var(--aw-accent);
+  animation: todo-spin 1s linear infinite;
+}
+
+@keyframes todo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.todo-icon-pending {
+  color: var(--aw-fg-muted);
+}
+
+.todo-item-content {
+  color: var(--aw-fg);
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.todo-item-completed .todo-item-content {
+  color: var(--aw-fg-muted);
+  text-decoration: line-through;
+}
+
+.todo-priority-high {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 5px;
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  border-radius: var(--aw-radius-sm);
+  background: var(--aw-danger);
+  color: #fff;
+}
+
+.todo-priority-medium {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 5px;
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  border-radius: var(--aw-radius-sm);
+  background: #e59935;
+  color: #fff;
+}

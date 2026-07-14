@@ -4,6 +4,7 @@ import { Markdown } from '../shared/Markdown';
 import { useConfirm } from '../shared/confirm';
 import { ChatUserBubble } from './ChatUserBubble';
 import { ChatToolCall, type ToolCallDisplay } from './ChatToolCall';
+import { TodoList } from './TodoList';
 import { Codicon } from './Codicon';
 import { PermissionDialog, type PermissionDialogResponse } from './PermissionDialog';
 import { QuestionDialog } from './QuestionDialog';
@@ -776,13 +777,16 @@ export function ChatPanel({
   return (
     <div className="chat-panel">
       {session && (
-        <div className="chat-header">
-          <div className="chat-header-title">{session.title}</div>
-          <div className="chat-header-sub">
-            {session.projectName} · <span className="stat-added">+{session.added}</span>{' '}
-            <span className="stat-removed">-{session.removed}</span>
+        <>
+          <div className="chat-header">
+            <div className="chat-header-title">{session.title}</div>
+            <div className="chat-header-sub">
+              {session.projectName} · <span className="stat-added">+{session.added}</span>{' '}
+              <span className="stat-removed">-{session.removed}</span>
+            </div>
           </div>
-        </div>
+          <TodoList sessionId={session.id} />
+        </>
       )}
 
       <div className="chat-transcript" ref={scrollRef}>

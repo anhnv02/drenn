@@ -14,6 +14,7 @@ import type {
   SelectedModel,
   Session,
   SkillInfo,
+  TodoItem,
   Transcript,
 } from './types';
 
@@ -73,6 +74,7 @@ export const IPC = {
   backgroundJobEvent: 'background:job',
   sessionCwd: 'session:cwd',
   dialogOpenDirectory: 'dialog:openDirectory',
+  todosGet: 'todos:get',
 } as const;
 
 export interface SessionsResponse {
@@ -264,4 +266,5 @@ export interface AgentWindowApi {
   runSkill(sessionId: string, skillName: string, args?: string): Promise<void>;
   openEditor(initialContent?: string): Promise<{ content: string; cancelled: boolean }>;
   getAvailableEditor(): Promise<{ editor: string | null }>;
+  getTodos(sessionId: string): Promise<{ todos: TodoItem[] }>;
 }

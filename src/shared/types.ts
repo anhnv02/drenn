@@ -166,3 +166,10 @@ export interface MCPServer {
   headers: Record<string, string>;
   enabled?: boolean;
 }
+
+export interface TodoItem {
+  id: string;
+  content: string;
+  status: 'pending' | 'in_progress' | 'completed';
+  priority: 'high' | 'medium' | 'low';
+}

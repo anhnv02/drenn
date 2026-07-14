@@ -113,6 +113,7 @@ const api: AgentWindowApi = {
   // External Editor
   openEditor: (initialContent) => ipcRenderer.invoke(IPC.editorOpen, initialContent),
   getAvailableEditor: () => ipcRenderer.invoke(IPC.editorGetAvailable),
+  getTodos: (sessionId) => ipcRenderer.invoke(IPC.todosGet, sessionId),
   // Background sub-agent jobs
   onBackgroundJob: (handler) => {
     const listener = (_event: Electron.IpcRendererEvent, payload: BackgroundJobPush) =>
