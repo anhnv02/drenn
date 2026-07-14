@@ -1,4 +1,4 @@
-import { ipcMain, type BrowserWindow } from 'electron';
+import { dialog, ipcMain, type BrowserWindow } from 'electron';
 import { IPC, type PermissionResponsePayload } from '../shared/ipc';
 import type {
   AgentInfo,
@@ -307,9 +307,9 @@ export function registerIpcHandlers(): void {
 
   ipcMain.handle(
     IPC.createSession,
-    async (_event, projectName: string, sourceSessionId: string) => {
-      const cwd = (await getSessionCwd(sourceSessionId)) ?? process.cwd();
-      const session = createLocalSession(projectName, cwd);
+    async (_event, projectName: string, sourceSessionId: string, cwd?: string) => {
+      const resolvedCwd = cwd ?? (await getSessionCwd(sourceSessionId)) ?? process.cwd();
+      const session = createLocalSession(projectName, resolvedCwd);
       invalidateCache('sessions');
       return session;
     },
@@ -725,4 +725,15 @@ export function registerIpcHandlers(): void {
   );
 
   ipcMain.handle(IPC.editorGetAvailable, () => ({ editor: getAvailableEditor() }));
+
+  ipcMain.handle(IPC.dialogOpenDirectory, async () => {
+    const result = await dialog.showOpenDialog(mainWindow!, {
+      properties: ['openDirectory', 'createDirectory'],
+      title: 'Select Project Directory',
+    });
+    if (result.canceled || result.filePaths.length === 0) {
+      return { path: '', cancelled: true };
+    }
+    return { path: result.filePaths[0], cancelled: false };
+  });
 }

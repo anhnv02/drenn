@@ -27,6 +27,7 @@ interface Props {
   runningSessions: Set<string>;
   onSelectSession: (sessionId: string) => void;
   onNewSession: () => void;
+  onNewProject: () => void;
   onDeleteSession: (sessionId: string) => void;
   width?: number;
 }
@@ -155,6 +156,7 @@ export function SessionsPanel({
   runningSessions,
   onSelectSession,
   onNewSession,
+  onNewProject,
   onDeleteSession,
   width,
 }: Props) {
@@ -162,13 +164,22 @@ export function SessionsPanel({
     <div className="sessions-panel" style={width ? { width } : undefined}>
       <div className="sessions-toolbar">
         <span className="sessions-toolbar-title">Sessions</span>
-        <button
-          className="new-session-btn"
-          title="New session in the active project"
-          onClick={onNewSession}
-        >
-          New <span className="kbd">⌘N</span>
-        </button>
+        <div className="sessions-toolbar-actions">
+          <button
+            className="new-session-btn"
+            title="New session in the active project"
+            onClick={onNewSession}
+          >
+            New <span className="kbd">⌘N</span>
+          </button>
+          <button
+            className="new-project-btn"
+            title="Create a new project"
+            onClick={onNewProject}
+          >
+            <Codicon name="add" size={12} /> Project
+          </button>
+        </div>
       </div>
       <div className="sessions-list">
         {projects.map((project) => (

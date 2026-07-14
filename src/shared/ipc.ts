@@ -72,6 +72,7 @@ export const IPC = {
   skillsRun: 'skills:run',
   backgroundJobEvent: 'background:job',
   sessionCwd: 'session:cwd',
+  dialogOpenDirectory: 'dialog:openDirectory',
 } as const;
 
 export interface SessionsResponse {
@@ -205,7 +206,7 @@ export interface RevertReportEntry {
 
 export interface AgentWindowApi {
   getSessions(): Promise<SessionsResponse>;
-  createSession(projectName: string, sourceSessionId: string): Promise<Session>;
+  createSession(projectName: string, sourceSessionId: string, cwd?: string): Promise<Session>;
   deleteSession(sessionId: string): Promise<void>;
   getChanges(sessionId: string | null): Promise<ChangesResponse>;
   getFiles(sessionId: string | null): Promise<{ files: FileChange[] }>;
@@ -258,6 +259,7 @@ export interface AgentWindowApi {
   getCommands(sessionId: string): Promise<{ commands: CustomCommand[] }>;
   runCommand(sessionId: string, commandId: string, args?: Record<string, string>): Promise<void>;
   getSessionCwd(sessionId: string): Promise<string>;
+  openDirectory(): Promise<{ path: string; cancelled: boolean }>;
   getSkills(sessionId: string): Promise<{ skills: SkillInfo[] }>;
   runSkill(sessionId: string, skillName: string, args?: string): Promise<void>;
   openEditor(initialContent?: string): Promise<{ content: string; cancelled: boolean }>;

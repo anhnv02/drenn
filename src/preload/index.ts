@@ -11,8 +11,8 @@ import {
 
 const api: AgentWindowApi = {
   getSessions: () => ipcRenderer.invoke(IPC.getSessions),
-  createSession: (projectName, sourceSessionId) =>
-    ipcRenderer.invoke(IPC.createSession, projectName, sourceSessionId),
+  createSession: (projectName, sourceSessionId, cwd) =>
+    ipcRenderer.invoke(IPC.createSession, projectName, sourceSessionId, cwd),
   deleteSession: (sessionId) => ipcRenderer.invoke(IPC.deleteSession, sessionId),
   getChanges: (sessionId) => ipcRenderer.invoke(IPC.getChanges, sessionId),
   getFiles: (sessionId) => ipcRenderer.invoke(IPC.getFiles, sessionId),
@@ -105,6 +105,7 @@ const api: AgentWindowApi = {
     ipcRenderer.invoke(IPC.commandRun, sessionId, commandId, args),
   // Session cwd
   getSessionCwd: (sessionId) => ipcRenderer.invoke(IPC.sessionCwd, sessionId),
+  openDirectory: () => ipcRenderer.invoke(IPC.dialogOpenDirectory),
   // Skills
   getSkills: (sessionId) => ipcRenderer.invoke(IPC.skillsGet, sessionId),
   runSkill: (sessionId, skillName, args) =>

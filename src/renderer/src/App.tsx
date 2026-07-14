@@ -176,6 +176,19 @@ export function App() {
     setActiveSessionId(session.id);
   }, [projects, activeSessionId]);
 
+  const handleNewProject = useCallback(async () => {
+    const result = await api.openDirectory();
+    if (result.cancelled || !result.path) return;
+    const projectName = result.path.split('/').pop() || result.path;
+    const session = await api.createSession(projectName, '', result.path);
+    const newProject = {
+      name: projectName,
+      sessions: [session],
+    };
+    setProjects((prev) => [newProject, ...prev]);
+    setActiveSessionId(session.id);
+  }, []);
+
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && !e.shiftKey && !e.altKey && e.key.toLowerCase() === 'n') {
@@ -289,6 +302,7 @@ export function App() {
             runningSessions={runningSessions}
             onSelectSession={setActiveSessionId}
             onNewSession={handleNewSession}
+            onNewProject={handleNewProject}
             onDeleteSession={handleDeleteSession}
             width={leftWidth}
           />

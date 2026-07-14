@@ -17,6 +17,12 @@
   border-bottom: 1px solid var(--aw-border);
 }
 
+.sessions-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .sessions-toolbar-title {
   font-weight: 600;
   font-size: 15px;
@@ -45,6 +51,25 @@
 .new-session-btn .kbd {
   color: var(--aw-fg-muted);
   font-size: 11px;
+}
+
+.new-project-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid var(--aw-border);
+  background: var(--aw-hover-bg);
+  color: var(--aw-fg);
+  font-size: 12px;
+  font-weight: 500;
+  height: 28px;
+  padding: 0 8px;
+  border-radius: var(--aw-radius-sm);
+}
+
+.new-project-btn:hover {
+  background: var(--aw-active-bg);
+  border-color: var(--aw-accent);
 }
 
 .sessions-list {
