@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Added
 
+- New project creation with directory picker
 - Configurable sampling params (temperature, topP, maxTokens) and non-streaming mode
 - Copy Absolute/Relative Path via right-click on file items
 - Skills system with slash-command invocation
