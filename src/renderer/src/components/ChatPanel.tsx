@@ -757,13 +757,12 @@ export function ChatPanel({
   const slashMenuItems =
     slashFilter !== null ? buildSlashMenuItems(slashFilter, commands, skills) : [];
 
-  function copyAllAssistantText(upToStepId: string) {
-    const idx = steps.findIndex((s) => s.id === upToStepId);
-    if (idx === -1) return '';
-    return steps
-      .slice(0, idx + 1)
-      .filter((s) => s.heading !== 'You' && s.heading !== 'System' && s.heading !== 'ToolCall')
-      .flatMap((s) => s.blocks.filter((b) => b.kind !== 'tool').map((b) => b.content))
+  function copyStepContent(stepId: string) {
+    const step = steps.find((s) => s.id === stepId);
+    if (!step) return '';
+    return step.blocks
+      .filter((b) => b.kind !== 'tool')
+      .map((b) => b.content)
       .join('\n\n');
   }
 
@@ -854,7 +853,7 @@ export function ChatPanel({
                         className={`chat-copy-btn ${copiedStepId === step.id ? 'chat-copy-btn-copied' : ''}`}
                         title="Copy response"
                         aria-label="Copy response"
-                        onClick={() => handleCopyText(step.id, copyAllAssistantText(step.id))}
+                        onClick={() => handleCopyText(step.id, copyStepContent(step.id))}
                       >
                         {copiedStepId === step.id ? <CheckIcon /> : <CopyIcon />}
                       </button>
