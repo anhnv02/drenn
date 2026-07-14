@@ -18,7 +18,7 @@ describe('project instructions', () => {
     const prompt = buildSystemPrompt(dir);
     expect(prompt).toContain('Always use tabs in this project.');
     expect(prompt).toContain(join(dir, 'CLAUDE.md'));
-    expect(prompt).toContain('OVERRIDE any default behavior');
+    expect(prompt).toContain('override default behavior');
     expect(prompt).toContain(`Working directory: ${dir}`);
     expect(prompt).toContain('# Tone and style');
     expect(prompt).toContain('# Tool usage policy');
