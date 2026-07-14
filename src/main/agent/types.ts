@@ -1,4 +1,5 @@
 import type { ToolCall, ToolResponse } from '../tools/types';
+import type { TokenUsage } from '../../shared/types';
 
 export type AgentEventType =
   | 'thinking'
@@ -43,13 +44,6 @@ export interface AgentEvent {
   error?: Error | AgentError;
   usage?: TokenUsage;
   title?: string;
-}
-
-export interface TokenUsage {
-  inputTokens: number;
-  outputTokens: number;
-  cacheCreationTokens?: number;
-  cacheReadTokens?: number;
 }
 
 export interface WireToolCall {

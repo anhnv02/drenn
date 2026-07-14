@@ -1,6 +1,6 @@
 import { execFile } from 'node:child_process';
 import { existsSync } from 'node:fs';
-import { stat } from 'node:fs/promises';
+import { access, stat } from 'node:fs/promises';
 import { join, basename, isAbsolute } from 'node:path';
 import { homedir } from 'node:os';
 import type {
@@ -138,10 +138,24 @@ export async function listOpencodeSessions(): Promise<Session[]> {
 
 export async function getOpencodeCwd(rawId: string): Promise<string | null> {
   const id = rawId.replace(/^opencode:/, '');
-  const rows = await query<{ worktree: string }>(
-    `select p.worktree as worktree from session s join project p on p.id = s.project_id where s.id = ${sqlString(id)} limit 1;`,
+  const rows = await query<{ worktree: string; directory: string }>(
+    `select p.worktree as worktree, s.directory as directory
+     from session s join project p on p.id = s.project_id
+     where s.id = ${sqlString(id)} limit 1;`,
   );
-  return rows[0]?.worktree ?? null;
+  if (!rows[0]) return null;
+  const { worktree, directory } = rows[0];
+  // worktree is often a symlink that becomes stale; fall back to directory
+  const candidates = [worktree, directory].filter(Boolean);
+  for (const candidate of candidates) {
+    try {
+      await access(candidate);
+      return candidate;
+    } catch {
+      // doesn't exist on disk, try next
+    }
+  }
+  return null;
 }
 
 const MAX_STEPS = 200;

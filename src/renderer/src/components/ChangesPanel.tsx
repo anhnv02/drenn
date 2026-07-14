@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useState, useCallback, useRef } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useState, useCallback, useRef } from 'react';
 import { buildFileTree, collectFolderPaths, type TreeNode } from './fileTree';
 import { ChevronIcon, FileIcon, FolderIcon } from './TreeIcons';
 import { ResizeHandle } from './ResizeHandle';
 import { ContextMenu, type ContextMenuItem } from './ContextMenu';
+import { RubikLoader } from './RubikLoader';
 import type { FileChange } from '../../../shared/types';
 import { api } from '../api';
 import { useConfirm } from '../shared/confirm';
@@ -21,6 +22,7 @@ interface Props {
   files: FileChange[];
   currentFiles: FileChange[];
   treeFiles: FileChange[];
+  filesLoading?: boolean;
   sessionId?: string | null;
   onReverted?: () => void;
   onOpenDiff: (path: string, list: 'current' | 'session') => void;
@@ -39,6 +41,7 @@ export function ChangesPanel({
   files,
   currentFiles,
   treeFiles,
+  filesLoading,
   sessionId,
   onReverted,
   onOpenDiff,
@@ -112,7 +115,7 @@ export function ChangesPanel({
   const allFolderPaths = useMemo(() => collectFolderPaths(tree), [tree]);
   const [collapsed, setCollapsed] = useState<Set<string>>(() => new Set(allFolderPaths));
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setCollapsed(new Set(allFolderPaths));
   }, [allFolderPaths]);
 
@@ -281,7 +284,9 @@ export function ChangesPanel({
         )}
       </div>
 
-      <div className={`changes-list${tab === 'changes' ? ' changes-list-split' : ''}`}>
+      <div
+        className={`changes-list${tab === 'changes' ? ' changes-list-split' : tab === 'files' ? ' changes-list-files' : ''}`}
+      >
         {tab === 'changes' ? (
           <>
             <div
@@ -327,6 +332,10 @@ export function ChangesPanel({
               )}
             </div>
           </>
+        ) : filesLoading ? (
+          <div className="changes-files-loading">
+            <RubikLoader label="Loading…" />
+          </div>
         ) : (
           renderTree(tree, 0)
         )}

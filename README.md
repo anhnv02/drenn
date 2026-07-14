@@ -15,12 +15,7 @@
   <img src="https://img.shields.io/badge/TypeScript-React%2018-3178C6?logo=typescript&logoColor=white" alt="TypeScript">
 </p>
 
-<!--
-  💡 Gợi ý: chèn 1 ảnh chụp màn hình hoặc GIF demo ở đây trước khi publish.
-  Ảnh app thật luôn tăng tỉ lệ người xem đọc tiếp README rất nhiều.
-
-  <p align="center"><img src="docs/screenshot.png" width="800" alt="Drenn screenshot"></p>
--->
+<p align="center"><img src="build/Screenshot 2026-07-13 at 18.01.34.png" width="800" alt="Drenn screenshot"></p>
 
 ## Table of Contents
 

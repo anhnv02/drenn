@@ -557,6 +557,7 @@ export function registerIpcHandlers(): void {
       providerName: BUILTIN_PROVIDER_NAME,
       modelId: m.id,
       modelName: m.name,
+      vision: false,
     }));
     const xiaomiKey = readXiaomiApiKey();
     const xiaomiModels =
@@ -570,6 +571,7 @@ export function registerIpcHandlers(): void {
       providerName: XIAOMI_PROVIDER_NAME,
       modelId: m.id,
       modelName: m.name,
+      vision: false,
     }));
     const configured: ModelChoice[] = readProviders().flatMap((provider) =>
       provider.apiType !== 'chat-completions'
@@ -581,6 +583,7 @@ export function registerIpcHandlers(): void {
               providerName: provider.name,
               modelId: m.id,
               modelName: m.name || m.id,
+              vision: m.vision,
             })),
     );
     return { models: [...builtin, ...xiaomi, ...configured], selected: readSelectedModel() };

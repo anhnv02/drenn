@@ -231,6 +231,7 @@ export function ChatPanel({
   const [selectedSlashIndex, setSelectedSlashIndex] = useState(0);
   const slashMenuRef = useRef<HTMLDivElement>(null);
   const [copiedStepId, setCopiedStepId] = useState<string | null>(null);
+  const [tokenUsage, setTokenUsage] = useState<{ input: number; output: number } | null>(null);
 
   useEffect(() => {
     api.getAvailableEditor().then(({ editor }) => setEditorAvailable(!!editor));
@@ -270,6 +271,7 @@ export function ChatPanel({
   }, [session?.id]);
 
   useEffect(() => {
+    setTokenUsage(null);
     if (!session) {
       setCommands([]);
       setSkills([]);
@@ -375,6 +377,9 @@ export function ChatPanel({
           }
           thinkingRefs.current.set(sid, '');
           setThinkingBySession((prev) => new Map(prev).set(sid, ''));
+          if (isActive && event.usage) {
+            setTokenUsage({ input: event.usage.inputTokens, output: event.usage.outputTokens });
+          }
           break;
         }
         case 'done':
@@ -580,6 +585,38 @@ export function ChatPanel({
 
     const images = fileAttachments.filter((fa) => fa.type === 'image').map((fa) => fa.content);
 
+    if (images.length > 0 && selectedModel?.vision === false) {
+      setFileAttachments([]);
+      setInput('');
+      setSteps((prev) => [
+        ...prev,
+        {
+          id: `local-${Date.now()}`,
+          heading: 'You',
+          finished: true,
+          blocks: [
+            { kind: 'text', content: prompt },
+            ...images.map((url) => ({ kind: 'image' as const, content: url })),
+            ...fileAttachments
+              .filter((fa) => fa.type === 'text')
+              .map((fa) => ({ kind: 'file' as const, content: fa.name })),
+          ],
+        },
+        {
+          id: `error-${Date.now()}`,
+          heading: 'Error',
+          finished: true,
+          blocks: [
+            {
+              kind: 'text',
+              content: `The selected model "${selectedModel?.modelName}" does not support image input. Please select a vision-capable model or remove the attached images.`,
+            },
+          ],
+        },
+      ]);
+      return;
+    }
+
     if (isRunning) {
       api.enqueueInput(session.id, prompt, delivery);
       setSteps((prev) => [
@@ -600,6 +637,7 @@ export function ChatPanel({
     }
 
     currentContentRefs.current.set(session.id, '');
+    setTokenUsage(null);
     setToolCallsBySession((prev) => new Map(prev).set(session.id, []));
     setCurrentContentBySession((prev) => new Map(prev).set(session.id, ''));
     setRunningSessions((prev) => new Set(prev).add(session.id));
@@ -861,6 +899,20 @@ export function ChatPanel({
 
         {isRunning && <RubikLoader />}
       </div>
+
+      {tokenUsage && (
+        <div className="chat-status">
+          <span className="chat-status-item">
+            <span className="chat-status-label">In</span>
+            <span className="chat-status-value">{tokenUsage.input.toLocaleString()}</span>
+          </span>
+          <span className="chat-status-sep" />
+          <span className="chat-status-item">
+            <span className="chat-status-label">Out</span>
+            <span className="chat-status-value">{tokenUsage.output.toLocaleString()}</span>
+          </span>
+        </div>
+      )}
 
       <div
         className={`chat-input-bar${isDragOver ? ' chat-input-bar-dragover' : ''}`}

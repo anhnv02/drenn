@@ -1,6 +1,6 @@
-import type { ChatMessage, AgentEvent, TokenUsage } from '../agent/types';
+import type { ChatMessage, AgentEvent } from '../agent/types';
 import type { BaseTool } from '../tools/types';
-import type { Provider, SelectedModel } from '../../shared/types';
+import type { Provider, SelectedModel, TokenUsage } from '../../shared/types';
 
 export interface SamplingOptions {
   topP?: number;

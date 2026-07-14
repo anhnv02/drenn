@@ -266,12 +266,14 @@
 .chat-input-bar {
   border: 1px solid var(--aw-input-border);
   border-radius: var(--aw-radius-md);
-  margin: 12px 24px 16px;
+  margin: 12px 24px 8px;
   background: var(--aw-input-bg);
   max-width: 900px;
   width: calc(100% - 48px);
   align-self: center;
 }
+
+
 
 .chat-input {
   width: 100%;
@@ -517,6 +519,41 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* ── Token status bar ─────────────────────────────────────────────────── */
+
+.chat-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 4px 16px;
+  font-size: 11px;
+  color: var(--aw-fg-muted);
+  flex-shrink: 0;
+}
+
+.chat-status-sep {
+  display: inline-block;
+  width: 1px;
+  height: 10px;
+  background: var(--aw-border);
+}
+
+.chat-status-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.chat-status-label {
+  opacity: 0.7;
+}
+
+.chat-status-value {
+  font-variant-numeric: tabular-nums;
+  color: var(--aw-fg);
 }
 
 /* ── File attachments & drag-and-drop ──────────────────────────────── */

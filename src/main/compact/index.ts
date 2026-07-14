@@ -1,6 +1,7 @@
 import type { ChatMessage } from '../agent/types';
 import type { LLMProvider } from '../llm/openaiClient';
 import { buildSystemPrompt } from '../agent/systemPrompt';
+import { DEFAULT_CONTEXT_WINDOW } from '../../shared/types';
 
 const SUMMARIZER_SYSTEM_PROMPT = `Your task is to create a detailed summary of the conversation so far, paying close attention to the user's explicit requests and your previous actions. This summary will replace the older messages, and the conversation will continue from it — so it must be thorough enough that work can resume without losing context.
 
@@ -32,8 +33,6 @@ Be factual: include only information that appeared in the conversation.`;
 const CONTEXT_USAGE_THRESHOLD = 0.95;
 const TOOL_OUTPUT_MAX_CHARS = 2000;
 const KEEP_RECENT_MESSAGES = 10;
-
-export const DEFAULT_CONTEXT_WINDOW = 128000;
 
 export interface CompactResult {
   summary: string;

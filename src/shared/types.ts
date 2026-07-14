@@ -100,7 +100,17 @@ export interface ModelChoice {
   providerName: string;
   modelId: string;
   modelName: string;
+  contextWindow?: number;
+  vision?: boolean;
 }
+
+export interface TokenUsage {
+  inputTokens: number;
+  outputTokens: number;
+  cacheReadTokens?: number;
+}
+
+export const DEFAULT_CONTEXT_WINDOW = 128000;
 
 export type ApiType = 'chat-completions' | 'responses';
 
@@ -114,6 +124,7 @@ export interface ProviderModel {
   requestHeaders: Record<string, string>;
   temperature?: number;
   topP?: number;
+  vision?: boolean;
 }
 
 export interface Provider {

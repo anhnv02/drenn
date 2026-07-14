@@ -1,6 +1,7 @@
 import type { BrowserWindow } from 'electron';
 import { IPC } from '../../shared/ipc';
-import type { ChatMessage, AgentEvent, AgentError, TokenUsage } from './types';
+import type { ChatMessage, AgentEvent, AgentError } from './types';
+import type { TokenUsage } from '../../shared/types';
 import type { BaseTool, ExecutionContext, ToolCall, ToolResponse } from '../tools/types';
 import type { LLMProvider } from '../llm/openaiClient';
 import { ApiError, resolveConfiguredProvider, resolveProviderForModel } from '../llm/openaiClient';
@@ -19,12 +20,8 @@ import type { LSPClient } from '../lsp/client';
 import { LSPManager } from '../lsp/manager';
 import type { MCPServer } from '../mcp/types';
 import { loadMCPTools, MCPToolWrapper } from '../mcp';
-import {
-  compactConversation,
-  buildCompactSessionMessages,
-  compactIfNeeded,
-  DEFAULT_CONTEXT_WINDOW,
-} from '../compact';
+import { compactConversation, buildCompactSessionMessages, compactIfNeeded } from '../compact';
+import { DEFAULT_CONTEXT_WINDOW } from '../../shared/types';
 import { clearFileReads } from '../tools/edit';
 import { generateTitle } from './titleGenerator';
 import { initRegistry, getAgent } from './subagent/registry';

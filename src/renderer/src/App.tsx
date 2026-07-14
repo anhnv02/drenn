@@ -29,6 +29,7 @@ export function App() {
   const [files, setFiles] = useState<FileChange[]>([]);
   const [currentFiles, setCurrentFiles] = useState<FileChange[]>([]);
   const [treeFiles, setTreeFiles] = useState<FileChange[]>([]);
+  const [filesLoading, setFilesLoading] = useState(false);
   const [modal, setModal] = useState<{
     path: string;
     mode: 'diff' | 'file';
@@ -116,14 +117,21 @@ export function App() {
 
   useEffect(() => {
     let cancelled = false;
+    const start = Date.now();
+    setFilesLoading(true);
     api.getChanges(activeSessionId).then(({ files, current }) => {
       if (!cancelled) {
         setFiles(files);
         setCurrentFiles(current);
       }
     });
-    api.getFiles(activeSessionId).then(({ files }) => {
-      if (!cancelled) setTreeFiles(files);
+    api.getFiles(activeSessionId).then(async ({ files }) => {
+      const elapsed = Date.now() - start;
+      if (elapsed < 1500) await new Promise((r) => setTimeout(r, 1500 - elapsed));
+      if (!cancelled) {
+        setTreeFiles(files);
+        setFilesLoading(false);
+      }
     });
     setModal(null);
     return () => {
@@ -138,8 +146,15 @@ export function App() {
         setCurrentFiles(current);
       }
     });
-    api.getFiles(sessionId).then(({ files }) => {
-      if (activeSessionIdRef.current === sessionId) setTreeFiles(files);
+    const start = Date.now();
+    setFilesLoading(true);
+    api.getFiles(sessionId).then(async ({ files }) => {
+      const elapsed = Date.now() - start;
+      if (elapsed < 1500) await new Promise((r) => setTimeout(r, 1500 - elapsed));
+      if (activeSessionIdRef.current === sessionId) {
+        setTreeFiles(files);
+        setFilesLoading(false);
+      }
     });
   }, []);
 
@@ -316,6 +331,7 @@ export function App() {
             files={files}
             currentFiles={currentFiles}
             treeFiles={treeFiles}
+            filesLoading={filesLoading}
             sessionId={activeSessionId}
             onReverted={() => activeSessionId && refreshChanges(activeSessionId)}
             onOpenDiff={(path, list) => setModal({ path, mode: 'diff', list })}
