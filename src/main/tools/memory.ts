@@ -3,6 +3,7 @@ import * as path from 'path';
 import type { BaseTool, ExecutionContext, ToolCall, ToolInfo, ToolResponse } from './types';
 import { isExternalPath } from './pathUtil';
 import { projectMemoryDir, invalidateProjectMemory } from '../agent/memoryStore';
+import { parseToolInput } from '../../shared/utils/json';
 
 const MEMORY_INDEX_FILE = 'MEMORY.md';
 
@@ -44,12 +45,11 @@ Usage:
   }
 
   async run(ctx: ExecutionContext, call: ToolCall): Promise<ToolResponse> {
-    let params: { action?: MemoryAction; path?: string; content?: string };
-    try {
-      params = JSON.parse(call.input);
-    } catch {
-      return { content: 'Error: invalid tool input', isError: true };
-    }
+    const params = parseToolInput<{
+      action?: MemoryAction;
+      path?: string;
+      content?: string;
+    }>(call.input);
 
     const { action, path: relPath, content } = params;
     if (!action) {

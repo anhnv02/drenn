@@ -11,6 +11,7 @@ import type {
   TranscriptStep,
 } from '../../shared/types';
 import { accumulate, toFileChanges, type FileChangeAcc } from './changeUtils';
+import { parseJsonSafe } from '../../shared/utils/json';
 
 function codeUserDir(): string {
   if (process.platform === 'darwin') {
@@ -45,8 +46,11 @@ async function listWorkspaces(): Promise<WorkspaceEntry[]> {
   for (const storageDir of dirs) {
     let folderPath: string | null = null;
     try {
-      const meta = JSON.parse(await readFile(join(storageDir, 'workspace.json'), 'utf8'));
-      if (typeof meta.folder === 'string') folderPath = fileURLToPath(meta.folder);
+      const raw = await readFile(join(storageDir, 'workspace.json'), 'utf8');
+      const meta = parseJsonSafe(raw);
+      if (meta && typeof meta === 'object' && typeof (meta as any).folder === 'string') {
+        folderPath = fileURLToPath((meta as any).folder);
+      }
     } catch {
       // no workspace.json (e.g. an empty window) — skip project attribution
     }
@@ -90,13 +94,7 @@ async function loadSessionState(filePath: string): Promise<any | null> {
   const lines = content
     .split('\n')
     .filter((l) => l.trim())
-    .map((l) => {
-      try {
-        return JSON.parse(l);
-      } catch {
-        return null;
-      }
-    })
+    .map((l) => parseJsonSafe(l))
     .filter((e) => e !== null);
   if (!lines.length) return null;
   return replayEvents(lines);

@@ -4,6 +4,7 @@ import type { SubAgentConfig } from './types';
 import type { PermissionConfig } from '../../permission/ruleset';
 import { registerAgent, unregisterAgent } from './registry';
 import { AGENT_DIR } from '../../config/paths';
+import { parseJsonSafe } from '../../../shared/utils/json';
 
 export async function initPersistedAgents(): Promise<void> {
   const configs = await loadPersistedAgents();
@@ -177,11 +178,9 @@ function coerce(value: string): unknown {
   if (v === 'null' || v === '~') return null;
   if (v !== '' && !Number.isNaN(Number(v))) return Number(v);
   if (v.startsWith('"') && v.endsWith('"')) {
-    try {
-      return JSON.parse(v);
-    } catch {
-      return v.slice(1, -1);
-    }
+    const parsed = parseJsonSafe(v);
+    if (parsed !== undefined) return parsed;
+    return v.slice(1, -1);
   }
   if (v.startsWith("'") && v.endsWith("'")) return v.slice(1, -1);
   return v;

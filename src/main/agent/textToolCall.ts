@@ -1,4 +1,5 @@
 import type { ToolCall } from '../tools/types';
+import { parseJsonSafe } from '../../shared/utils/json';
 
 const XML_OPEN = '<tool_call';
 const XML_CLOSE = '</tool_call>';
@@ -33,14 +34,20 @@ function isPlausibleToolName(name: string): boolean {
   return /[a-zA-Z0-9]/.test(name);
 }
 
+function isValidToolInput(name: string, input: string): boolean {
+  const parsed = parseJsonSafe(input);
+  if (parsed === undefined || parsed === null) return false;
+  if (typeof parsed !== 'object') return false;
+  return true;
+}
+
 function coerceValue(value: string): unknown {
   if (/^-?\d+(\.\d+)?$/.test(value)) return Number(value);
   if (value === 'true') return true;
   if (value === 'false') return false;
   if (value.startsWith('{') || value.startsWith('[')) {
-    try {
-      return JSON.parse(value);
-    } catch {}
+    const parsed = parseJsonSafe(value);
+    if (parsed !== undefined) return parsed;
   }
   return value;
 }
@@ -157,10 +164,12 @@ export class TextToolCallFilter {
         args[param.key] = coerceValue(value.trim());
       });
 
+      const input = JSON.stringify(args);
+      if (!isValidToolInput(inv.name, input)) return;
       calls.push({
         id: `text-tc-${Date.now()}-${this.seq++}`,
         name: inv.name,
-        input: JSON.stringify(args),
+        input,
       });
     });
 
@@ -179,10 +188,12 @@ export class TextToolCallFilter {
         .trim();
       if (!name || !isPlausibleToolName(name)) continue;
       const args = m[2].trim();
+      const input = args || '{}';
+      if (!isValidToolInput(name, input)) continue;
       calls.push({
         id: `text-tc-${Date.now()}-${this.seq++}`,
         name,
-        input: args || '{}',
+        input,
       });
     }
     return calls;
@@ -195,23 +206,26 @@ export class TextToolCallFilter {
     const args: Record<string, unknown> = {};
     const paramRe = /<parameter=([^>\s]+)\s*>/g;
     const params: Array<{ key: string; valueStart: number; tagStart: number }> = [];
-    let m: RegExpExecArray | null;
-    while ((m = paramRe.exec(block))) {
-      params.push({ key: m[1], valueStart: m.index + m[0].length, tagStart: m.index });
+    let p: RegExpExecArray | null;
+    while ((p = paramRe.exec(block))) {
+      params.push({ key: p[1], valueStart: p.index + p[0].length, tagStart: p.index });
     }
 
-    params.forEach((p, i) => {
+    params.forEach((param, i) => {
       const rawEnd = i + 1 < params.length ? params[i + 1].tagStart : block.length;
-      let value = block.slice(p.valueStart, rawEnd);
+      let value = block.slice(param.valueStart, rawEnd);
       const close = value.search(/<\/(parameter|function|tool_call)>/);
       if (close !== -1) value = value.slice(0, close);
-      args[p.key] = coerceValue(value.trim());
+      args[param.key] = coerceValue(value.trim());
     });
+
+    const input = JSON.stringify(args);
+    if (!isValidToolInput(fn[1], input)) return null;
 
     return {
       id: `text-tc-${Date.now()}-${this.seq++}`,
       name: fn[1],
-      input: JSON.stringify(args),
+      input,
     };
   }
 }

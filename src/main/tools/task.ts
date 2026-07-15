@@ -9,6 +9,7 @@ import {
 } from '../agent/subagent';
 import type { AgentSession } from '../agent/subagent';
 import { AgentService } from '../agent';
+import { parseToolInput } from '../../shared/utils/json';
 
 const TASK_DESCRIPTION = `Launch a new agent to handle complex, multistep tasks autonomously.
 
@@ -92,28 +93,36 @@ export class TaskTool implements BaseTool {
   }
 
   async run(ctx: ExecutionContext, call: ToolCall): Promise<ToolResponse> {
-    const params = JSON.parse(call.input) as {
-      description: string;
-      prompt: string;
-      subagent_type: string;
+    const params = parseToolInput<{
+      description?: string;
+      prompt?: string;
+      subagent_type?: string;
       task_id?: string;
       background?: boolean;
-    };
+    }>(call.input);
 
-    const agent = getAgent(params.subagent_type, ctx.cwd);
+    const subagentType = params.subagent_type;
+    if (!subagentType) {
+      return {
+        content: 'Error: subagent_type is required',
+        isError: true,
+      };
+    }
+
+    const agent = getAgent(subagentType, ctx.cwd);
     if (!agent) {
       const availableTypes = [...listSubAgents(), ...listProjectAgents(ctx.cwd)]
         .map((a) => a.config.name)
         .join(', ');
       return {
-        content: `Agent type "${params.subagent_type}" not found. Available types: ${availableTypes}`,
+        content: `Agent type "${subagentType}" not found. Available types: ${availableTypes}`,
         isError: true,
       };
     }
 
     if (agent.config.mode === 'primary') {
       return {
-        content: `Cannot invoke primary agent "${params.subagent_type}" as a sub-agent. Use a subagent type instead.`,
+        content: `Cannot invoke primary agent "${subagentType}" as a sub-agent. Use a subagent type instead.`,
         isError: true,
       };
     }
@@ -141,15 +150,15 @@ export class TaskTool implements BaseTool {
 
       sessionManager.createSession(
         childSessionId,
-        params.subagent_type,
-        params.description,
+        subagentType,
+        params.description || 'task',
         parentSession,
         agent.config,
       );
 
       this.agentService.setMode(
         childSessionId,
-        params.subagent_type === 'plan' ? 'plan' : this.agentService.getMode(ctx.sessionId),
+        subagentType === 'plan' ? 'plan' : this.agentService.getMode(ctx.sessionId),
       );
 
       backgroundJobService.start(childSessionId, childSessionId, params.background === true);
@@ -164,7 +173,7 @@ export class TaskTool implements BaseTool {
 
         for await (const event of this.agentService.run(
           childSessionId,
-          params.prompt,
+          params.prompt || '',
           ctx.cwd,
           params.subagent_type,
         )) {

@@ -2,6 +2,7 @@ import { promises as fs } from 'fs';
 import { randomUUID } from 'node:crypto';
 import type { Provider } from '../../shared/types';
 import { PROVIDERS_FILE, DRENN_DIR } from './paths';
+import { parseJsonSafe } from '../../shared/utils/json';
 
 let providersCache: Provider[] | undefined;
 
@@ -19,7 +20,7 @@ async function readProvidersFile(): Promise<Provider[]> {
   if (providersCache) return providersCache;
   try {
     const raw = await fs.readFile(PROVIDERS_FILE, 'utf8');
-    const parsed = JSON.parse(raw);
+    const parsed = parseJsonSafe(raw);
     providersCache = Array.isArray(parsed) ? normalizeProviders(parsed) : [];
   } catch {
     providersCache = [];
@@ -33,7 +34,7 @@ function readProvidersFileSync(): Provider[] {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const fsSync = require('fs');
     const raw = fsSync.readFileSync(PROVIDERS_FILE, 'utf8');
-    const parsed = JSON.parse(raw);
+    const parsed = parseJsonSafe(raw);
     providersCache = Array.isArray(parsed) ? normalizeProviders(parsed) : [];
   } catch {
     providersCache = [];

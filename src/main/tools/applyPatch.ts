@@ -5,6 +5,7 @@ import { deniedToolResult, type PermissionService } from '../permission';
 import { recordFileRead, getFileReadTime } from './edit';
 import { isExternalPath } from './pathUtil';
 import { recordCheckpoint } from '../checkpoints';
+import { parseToolInput } from '../../shared/utils/json';
 
 interface PatchFile {
   action: 'create' | 'update' | 'delete' | 'move';
@@ -47,7 +48,9 @@ After markers, include the full file content for creates/updates, or nothing for
 
   async run(ctx: ExecutionContext, call: ToolCall): Promise<ToolResponse> {
     try {
-      const params = JSON.parse(call.input);
+      const params = parseToolInput<{
+        patchText?: string;
+      }>(call.input);
       const { patchText } = params;
 
       if (!patchText) {

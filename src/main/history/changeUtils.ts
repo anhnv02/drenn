@@ -1,6 +1,7 @@
 import { existsSync } from 'node:fs';
 import { isAbsolute, join } from 'node:path';
 import type { FileChange, FileStatus } from '../../shared/types';
+import { parseJsonSafe } from '../../shared/utils/json';
 
 export function countLineDiff(oldStr: string, newStr: string): { added: number; removed: number } {
   const oldLines = oldStr.length ? oldStr.split('\n') : [];
@@ -55,36 +56,27 @@ export function parseStepEditEntries(fileContent: string): StepEditEntry[] {
   const entries: StepEditEntry[] = [];
   for (const line of fileContent.split('\n')) {
     if (!line || !line.includes('"heading":"ToolCall"')) continue;
-    let entry: any;
-    try {
-      entry = JSON.parse(line);
-    } catch {
-      continue;
-    }
-    const blocks = entry.blocks;
+    const entry = parseJsonSafe(line);
+    if (!entry || typeof entry !== 'object') continue;
+
+    const blocks = (entry as any).blocks;
     if (!Array.isArray(blocks) || blocks.length === 0) continue;
     const block = blocks[0];
     if (block.kind !== 'tool' || typeof block.content !== 'string') continue;
 
-    let toolCall: any;
-    try {
-      toolCall = JSON.parse(block.content);
-    } catch {
-      continue;
-    }
+    const toolCall = parseJsonSafe(block.content);
+    if (!toolCall || typeof toolCall !== 'object') continue;
 
-    const name = typeof toolCall.name === 'string' ? toolCall.name.toLowerCase() : '';
+    const name =
+      typeof (toolCall as any).name === 'string' ? (toolCall as any).name.toLowerCase() : '';
     if (name !== 'edit' && name !== 'write') continue;
 
     let input: any;
-    try {
-      input = typeof toolCall.input === 'string' ? JSON.parse(toolCall.input) : toolCall.input;
-    } catch {
-      continue;
-    }
+    const rawInput = (toolCall as any).input;
+    input = typeof rawInput === 'string' ? parseJsonSafe(rawInput) : rawInput;
     if (!input || typeof input.file_path !== 'string') continue;
 
-    if (toolCall.result?.isError) continue;
+    if ((toolCall as any).result?.isError) continue;
 
     if (
       name === 'edit' &&

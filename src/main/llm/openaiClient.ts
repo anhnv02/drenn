@@ -1,6 +1,7 @@
 import type { ChatMessage, AgentEvent } from '../agent/types';
 import type { BaseTool } from '../tools/types';
 import type { Provider, SelectedModel, TokenUsage } from '../../shared/types';
+import { parseJsonSafe } from '../../shared/utils/json';
 
 export interface SamplingOptions {
   topP?: number;
@@ -20,13 +21,11 @@ export interface LLMProvider {
 
 function extractErrorMessage(body: string): string {
   const trimmed = body.trim();
-  try {
-    const parsed = JSON.parse(trimmed);
-    const inner = parsed?.error ?? parsed;
+  const parsed = parseJsonSafe(trimmed);
+  if (parsed && typeof parsed === 'object') {
+    const inner = (parsed as any)?.error ?? parsed;
     if (typeof inner === 'string' && inner) return inner;
     if (typeof inner?.message === 'string' && inner.message) return inner.message;
-  } catch {
-    // not JSON
   }
   return trimmed;
 }
@@ -274,11 +273,13 @@ export class OpenAICompatibleProvider implements LLMProvider {
         }
 
         try {
-          const parsed: StreamChunk & {
-            error?: { message?: string; type?: string; code?: string | number };
-          } = JSON.parse(data);
+          const parsed = parseJsonSafe(data) as
+            | (StreamChunk & {
+                error?: { message?: string; type?: string; code?: string | number };
+              })
+            | undefined;
 
-          if (parsed.error) {
+          if (parsed?.error) {
             yield {
               type: 'error',
               sessionId: '',
@@ -294,6 +295,8 @@ export class OpenAICompatibleProvider implements LLMProvider {
             };
             return;
           }
+
+          if (!parsed) continue;
 
           const choice = parsed.choices[0];
 

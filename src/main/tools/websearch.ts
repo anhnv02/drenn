@@ -1,4 +1,5 @@
 import type { BaseTool, ExecutionContext, ToolCall, ToolInfo, ToolResponse } from './types';
+import { parseToolInput } from '../../shared/utils/json';
 
 const SEARCH_ENDPOINT = 'https://html.duckduckgo.com/html/';
 const MAX_RESULTS = 8;
@@ -85,12 +86,10 @@ export class WebSearchTool implements BaseTool {
   }
 
   async run(_ctx: ExecutionContext, call: ToolCall): Promise<ToolResponse> {
-    let query: string;
-    try {
-      query = String(JSON.parse(call.input).query ?? '').trim();
-    } catch {
-      return { content: 'Error: invalid input', isError: true };
-    }
+    const params = parseToolInput<{
+      query?: string;
+    }>(call.input);
+    const query = String(params.query ?? '').trim();
     if (!query) {
       return { content: 'Error: query is required', isError: true };
     }

@@ -1,5 +1,6 @@
 import { spawn, type ChildProcess } from 'child_process';
 import type { BaseTool, ExecutionContext, ToolCall, ToolInfo, ToolResponse } from './types';
+import { parseToolInput } from '../../shared/utils/json';
 
 const MAX_JOB_OUTPUT = 1024 * 1024;
 
@@ -100,12 +101,10 @@ export class BashOutputTool implements BaseTool {
   }
 
   async run(_ctx: ExecutionContext, call: ToolCall): Promise<ToolResponse> {
-    let shellId: string;
-    try {
-      shellId = String(JSON.parse(call.input).shell_id ?? '');
-    } catch {
-      return { content: 'Error: invalid input', isError: true };
-    }
+    const params = parseToolInput<{
+      shell_id?: string;
+    }>(call.input);
+    const shellId = String(params.shell_id ?? '');
 
     const job = jobs.get(shellId);
     if (!job) {
@@ -152,12 +151,10 @@ export class KillShellTool implements BaseTool {
   }
 
   async run(_ctx: ExecutionContext, call: ToolCall): Promise<ToolResponse> {
-    let shellId: string;
-    try {
-      shellId = String(JSON.parse(call.input).shell_id ?? '');
-    } catch {
-      return { content: 'Error: invalid input', isError: true };
-    }
+    const params = parseToolInput<{
+      shell_id?: string;
+    }>(call.input);
+    const shellId = String(params.shell_id ?? '');
 
     const job = jobs.get(shellId);
     if (!job) {

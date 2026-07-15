@@ -2,6 +2,7 @@ import type { BrowserWindow } from 'electron';
 import type { BaseTool, ExecutionContext, ToolCall, ToolInfo, ToolResponse } from './types';
 import { IPC } from '../../shared/ipc';
 import { runHooks } from '../hooks';
+import { parseToolInput } from '../../shared/utils/json';
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -105,7 +106,12 @@ Each question includes a header, the question text, and a list of options.`,
 
   async run(ctx: ExecutionContext, call: ToolCall): Promise<ToolResponse> {
     try {
-      const params = JSON.parse(call.input);
+      const params = parseToolInput<{
+        header?: string;
+        question?: string;
+        options?: Array<{ label: string; description?: string }>;
+        multiple?: boolean;
+      }>(call.input, { multiple: false });
       const { header, question, options, multiple = false } = params;
 
       if (!header || !question || !options?.length) {

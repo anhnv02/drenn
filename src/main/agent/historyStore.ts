@@ -2,6 +2,7 @@ import { promises as fs } from 'fs';
 import { join } from 'path';
 import type { ChatMessage } from './types';
 import { HISTORY_DIR } from '../config/paths';
+import { parseJsonSafe } from '../../shared/utils/json';
 
 function isPersistable(sessionId: string): boolean {
   return !sessionId.includes(':sub:');
@@ -28,8 +29,8 @@ export async function loadMessageHistory(sessionId: string): Promise<ChatMessage
   if (!isPersistable(sessionId)) return null;
   try {
     const raw = await fs.readFile(historyFile(sessionId), 'utf8');
-    const messages = JSON.parse(raw) as ChatMessage[];
-    return Array.isArray(messages) && messages.length > 0 ? messages : null;
+    const messages = parseJsonSafe(raw);
+    return Array.isArray(messages) && messages.length > 0 ? (messages as ChatMessage[]) : null;
   } catch {
     return null;
   }

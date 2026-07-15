@@ -2,6 +2,7 @@ import type { BaseTool, ExecutionContext, ToolCall, ToolInfo, ToolResponse } fro
 import { MCPClient } from './client';
 import type { MCPTool, MCPServer } from './types';
 import { deniedToolResult, type PermissionService } from '../permission';
+import { parseToolInput } from '../../shared/utils/json';
 
 export class MCPToolWrapper implements BaseTool {
   private client: MCPClient;
@@ -54,7 +55,7 @@ export class MCPToolWrapper implements BaseTool {
         toolName: this.info().name,
         action: 'execute',
         description: permissionDescription,
-        params: JSON.parse(call.input),
+        params: parseToolInput(call.input),
         resource: '',
         cwd: ctx.cwd,
       });
@@ -67,7 +68,7 @@ export class MCPToolWrapper implements BaseTool {
     try {
       await this.ensureConnected();
 
-      const args = JSON.parse(call.input);
+      const args = parseToolInput(call.input) as Record<string, unknown>;
       const result = await this.client.callTool({
         name: this.tool.name,
         arguments: args,

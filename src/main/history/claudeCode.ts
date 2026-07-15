@@ -10,6 +10,7 @@ import type {
   TranscriptStep,
 } from '../../shared/types';
 import { countLineDiff, accumulate, toFileChanges, type FileChangeAcc } from './changeUtils';
+import { parseJsonSafe } from '../../shared/utils/json';
 
 const PROJECTS_DIR = join(homedir(), '.claude', 'projects');
 
@@ -82,9 +83,9 @@ async function scanMeta(filePath: string): Promise<SessionMeta> {
       line.includes('"tool_use"') &&
       (line.includes('"name":"Edit"') || line.includes('"name":"Write"'))
     ) {
-      try {
-        const entry = JSON.parse(line);
-        const blocks = entry.message?.content;
+      const entry = parseJsonSafe(line);
+      if (entry && typeof entry === 'object') {
+        const blocks = (entry as any).message?.content;
         if (Array.isArray(blocks)) {
           for (const block of blocks) {
             if (block.type !== 'tool_use') continue;
@@ -101,8 +102,6 @@ async function scanMeta(filePath: string): Promise<SessionMeta> {
             }
           }
         }
-      } catch {
-        // malformed/truncated line — skip
       }
     }
   }
@@ -110,11 +109,8 @@ async function scanMeta(filePath: string): Promise<SessionMeta> {
 }
 
 function unescape(text: string): string {
-  try {
-    return JSON.parse(`"${text}"`);
-  } catch {
-    return text;
-  }
+  const parsed = parseJsonSafe(`"${text}"`);
+  return typeof parsed === 'string' ? parsed : text;
 }
 
 let listInFlight: Promise<Session[]> | null = null;
@@ -217,13 +213,9 @@ export async function getClaudeCodeChanges(rawId: string): Promise<FileChange[]>
       !(line.includes('"name":"Edit"') || line.includes('"name":"Write"'))
     )
       continue;
-    let entry: any;
-    try {
-      entry = JSON.parse(line);
-    } catch {
-      continue;
-    }
-    const blocks = entry.message?.content;
+    const entry = parseJsonSafe(line);
+    if (!entry || typeof entry !== 'object') continue;
+    const blocks = (entry as any).message?.content;
     if (!Array.isArray(blocks)) continue;
     for (const block of blocks) {
       if (block.type !== 'tool_use' || typeof block.input?.file_path !== 'string') continue;
@@ -270,13 +262,9 @@ export async function getClaudeCodeFileOps(rawId: string, path: string): Promise
       !(line.includes('"name":"Edit"') || line.includes('"name":"Write"'))
     )
       continue;
-    let entry: any;
-    try {
-      entry = JSON.parse(line);
-    } catch {
-      continue;
-    }
-    const blocks = entry.message?.content;
+    const entry = parseJsonSafe(line);
+    if (!entry || typeof entry !== 'object') continue;
+    const blocks = (entry as any).message?.content;
     if (!Array.isArray(blocks)) continue;
     for (const block of blocks) {
       if (block.type !== 'tool_use' || typeof block.input?.file_path !== 'string') continue;
@@ -340,17 +328,13 @@ export async function getClaudeCodeTranscript(rawId: string): Promise<Transcript
 
   for (const line of content.split('\n')) {
     if (!line) continue;
-    let entry: any;
-    try {
-      entry = JSON.parse(line);
-    } catch {
-      continue;
-    }
-    if (entry.isMeta) continue;
-    if (entry.origin?.kind === 'task-notification') continue;
+    const entry = parseJsonSafe(line);
+    if (!entry || typeof entry !== 'object') continue;
+    if ((entry as any).isMeta) continue;
+    if ((entry as any).origin?.kind === 'task-notification') continue;
 
-    if (entry.type === 'user') {
-      const content_ = entry.message?.content;
+    if ((entry as any).type === 'user') {
+      const content_ = (entry as any).message?.content;
       const blocks: TranscriptBlock[] = [];
       if (typeof content_ === 'string') {
         if (content_.trim() && !isSyntheticUserText(content_))
@@ -364,14 +348,14 @@ export async function getClaudeCodeTranscript(rawId: string): Promise<Transcript
       }
       if (blocks.length) {
         steps.push({
-          id: entry.uuid ?? `u-${stepCounter++}`,
+          id: (entry as any).uuid ?? `u-${stepCounter++}`,
           heading: 'You',
           finished: true,
           blocks,
         });
       }
-    } else if (entry.type === 'assistant') {
-      const content_ = entry.message?.content;
+    } else if ((entry as any).type === 'assistant') {
+      const content_ = (entry as any).message?.content;
       const blocks: TranscriptBlock[] = [];
       if (Array.isArray(content_)) {
         for (const block of content_) {
@@ -384,7 +368,7 @@ export async function getClaudeCodeTranscript(rawId: string): Promise<Transcript
       }
       if (blocks.length) {
         steps.push({
-          id: entry.uuid ?? `a-${stepCounter++}`,
+          id: (entry as any).uuid ?? `a-${stepCounter++}`,
           heading: 'Claude',
           finished: true,
           blocks,

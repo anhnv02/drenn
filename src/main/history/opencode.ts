@@ -12,6 +12,7 @@ import type {
   TranscriptStep,
 } from '../../shared/types';
 import { countLineDiff, accumulate, toFileChanges, type FileChangeAcc } from './changeUtils';
+import { parseJsonSafe } from '../../shared/utils/json';
 
 const DB_PATH = join(homedir(), '.local', 'share', 'opencode', 'opencode.db');
 
@@ -28,11 +29,8 @@ function query<T = any>(sql: string): Promise<T[]> {
       { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024, timeout: 15_000 },
       (error, stdout) => {
         if (error || !stdout.trim()) return resolve([]);
-        try {
-          resolve(JSON.parse(stdout));
-        } catch {
-          resolve([]);
-        }
+        const result = parseJsonSafe(stdout);
+        resolve(Array.isArray(result) ? (result as T[]) : []);
       },
     );
   });

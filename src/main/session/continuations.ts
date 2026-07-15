@@ -11,6 +11,7 @@ import {
   type FileChangeAcc,
 } from '../history/changeUtils';
 import { CONTINUATIONS_DIR as CONT_DIR } from '../config/paths';
+import { parseJsonSafe } from '../../shared/utils/json';
 
 const MAX_BLOCK_CHARS = 4000;
 
@@ -63,14 +64,10 @@ export async function getContinuationSteps(sessionId: string): Promise<Transcrip
   const steps: TranscriptStep[] = [];
   for (const line of content.split('\n')) {
     if (!line) continue;
-    let entry: any;
-    try {
-      entry = JSON.parse(line);
-    } catch {
-      continue;
-    }
+    const entry = parseJsonSafe(line);
+    if (!entry || typeof entry !== 'object') continue;
 
-    const blocks = entry.blocks;
+    const blocks = (entry as any).blocks;
     if (!Array.isArray(blocks)) continue;
 
     const truncatedBlocks: TranscriptBlock[] = blocks.map((b: any) => ({
@@ -80,9 +77,9 @@ export async function getContinuationSteps(sessionId: string): Promise<Transcrip
     }));
 
     steps.push({
-      id: entry.id ?? `cont-${steps.length}`,
-      heading: entry.heading ?? 'Assistant',
-      finished: entry.finished ?? true,
+      id: (entry as any).id ?? `cont-${steps.length}`,
+      heading: (entry as any).heading ?? 'Assistant',
+      finished: (entry as any).finished ?? true,
       blocks: truncatedBlocks,
     });
   }

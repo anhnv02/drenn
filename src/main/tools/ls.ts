@@ -1,6 +1,7 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import type { BaseTool, ExecutionContext, ToolCall, ToolInfo, ToolResponse } from './types';
+import { parseToolInput } from '../../shared/utils/json';
 
 export class LsTool implements BaseTool {
   info(): ToolInfo {
@@ -28,7 +29,10 @@ export class LsTool implements BaseTool {
 
   async run(ctx: ExecutionContext, call: ToolCall): Promise<ToolResponse> {
     try {
-      const params = JSON.parse(call.input);
+      const params = parseToolInput<{
+        path?: string;
+        ignore?: string[];
+      }>(call.input, { ignore: [] });
       const { path: dirPath = ctx.cwd, ignore = [] } = params;
 
       const resolvedPath = path.resolve(ctx.cwd, dirPath);

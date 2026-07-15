@@ -5,6 +5,7 @@ import { deniedToolResult, type PermissionService } from '../permission';
 import { recordFileRead } from './edit';
 import { isExternalPath } from './pathUtil';
 import { recordCheckpoint } from '../checkpoints';
+import { parseToolInput } from '../../shared/utils/json';
 
 export class WriteTool implements BaseTool {
   private permissions: PermissionService;
@@ -43,7 +44,10 @@ Usage:
 
   async run(ctx: ExecutionContext, call: ToolCall): Promise<ToolResponse> {
     try {
-      const params = JSON.parse(call.input);
+      const params = parseToolInput<{
+        file_path?: string;
+        content?: string;
+      }>(call.input);
       const { file_path, content } = params;
 
       if (!file_path || content === undefined) {

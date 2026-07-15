@@ -2,6 +2,7 @@ import type { BaseTool, ExecutionContext, ToolCall, ToolInfo, ToolResponse } fro
 import type { LSPClient } from '../lsp/client';
 import type { Diagnostic } from '../lsp/protocol';
 import { DiagnosticSeverity } from '../lsp/protocol';
+import { parseToolInput } from '../../shared/utils/json';
 
 interface DiagnosticsParams {
   file_path?: string;
@@ -41,7 +42,7 @@ FEATURES:
   }
 
   async run(_ctx: ExecutionContext, call: ToolCall): Promise<ToolResponse> {
-    const params: DiagnosticsParams = JSON.parse(call.input);
+    const params = parseToolInput<DiagnosticsParams>(call.input);
 
     if (this.lspClients.size === 0) {
       return { content: 'No LSP clients available', isError: true };

@@ -2,6 +2,7 @@ import type { BaseTool, ExecutionContext, ToolCall, ToolInfo, ToolResponse } fro
 import type { PermissionService } from '../permission';
 import { sessionManager } from '../agent/subagent';
 import type { AgentService } from '../agent';
+import { parseToolInput } from '../../shared/utils/json';
 
 export class ExitPlanTool implements BaseTool {
   private permissions: PermissionService;
@@ -47,12 +48,10 @@ Do not use this for research tasks or questions; it is only for plans that requi
       };
     }
 
-    let plan: string;
-    try {
-      plan = String(JSON.parse(call.input).plan ?? '');
-    } catch {
-      return { content: 'Error: invalid input', isError: true };
-    }
+    const params = parseToolInput<{
+      plan?: string;
+    }>(call.input);
+    const plan = String(params.plan ?? '');
     if (!plan.trim()) {
       return { content: 'Error: plan is required', isError: true };
     }

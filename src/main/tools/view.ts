@@ -4,6 +4,7 @@ import type { BaseTool, ExecutionContext, ToolCall, ToolInfo, ToolResponse } fro
 import { deniedToolResult, type PermissionService } from '../permission';
 import { recordFileRead } from './edit';
 import { isExternalPath } from './pathUtil';
+import { parseToolInput } from '../../shared/utils/json';
 
 const MAX_FILE_SIZE = 250 * 1024;
 const MAX_LINE_LENGTH = 2000;
@@ -48,7 +49,11 @@ Usage:
 
   async run(ctx: ExecutionContext, call: ToolCall): Promise<ToolResponse> {
     try {
-      const params = JSON.parse(call.input);
+      const params = parseToolInput<{
+        file_path?: string;
+        offset?: number;
+        limit?: number;
+      }>(call.input, { offset: 1, limit: 2000 });
       const { file_path, offset = 1, limit = 2000 } = params;
 
       if (!file_path) {

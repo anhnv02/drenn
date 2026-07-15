@@ -1,6 +1,7 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import type { BaseTool, ExecutionContext, ToolCall, ToolInfo, ToolResponse } from './types';
+import { parseToolInput } from '../../shared/utils/json';
 
 const MAX_RESULTS = 100;
 const SKIP_DIRS = new Set([
@@ -108,7 +109,12 @@ Usage:
 
   async run(ctx: ExecutionContext, call: ToolCall): Promise<ToolResponse> {
     try {
-      const params = JSON.parse(call.input);
+      const params = parseToolInput<{
+        pattern?: string;
+        path?: string;
+        include?: string;
+        literal_text?: boolean;
+      }>(call.input, { literal_text: false });
       const { pattern, path: searchPath = ctx.cwd, include, literal_text = false } = params;
 
       if (!pattern) {

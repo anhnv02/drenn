@@ -18,6 +18,7 @@ import {
   type StepEditEntry,
 } from '../history/changeUtils';
 import { LOCAL_SESSIONS_DIR as LOCAL_DIR } from '../config/paths';
+import { parseJsonSafe } from '../../shared/utils/json';
 
 const fileIndex = new Map<string, string>();
 const cwdIndex = new Map<string, string>();
@@ -41,12 +42,10 @@ function scanMeta(filePath: string): LocalMeta {
     const tsMatch = line.match(/"updatedAt":"([^"]+)"/);
     if (tsMatch) meta.updatedAt = tsMatch[1];
     if (line.includes('"type":"meta"')) {
-      try {
-        const entry = JSON.parse(line);
-        if (entry.cwd) meta.cwd = entry.cwd;
-        if (entry.title) meta.title = entry.title;
-      } catch {
-        // skip malformed line
+      const entry = parseJsonSafe(line);
+      if (entry && typeof entry === 'object') {
+        if ((entry as any).cwd) meta.cwd = (entry as any).cwd;
+        if ((entry as any).title) meta.title = (entry as any).title;
       }
     }
   }
@@ -147,15 +146,11 @@ export async function getLocalTranscript(sessionId: string): Promise<TranscriptS
   const steps: TranscriptStep[] = [];
   for (const line of content.split('\n')) {
     if (!line) continue;
-    let entry: any;
-    try {
-      entry = JSON.parse(line);
-    } catch {
-      continue;
-    }
-    if (entry.type === 'meta') continue;
+    const entry = parseJsonSafe(line);
+    if (!entry || typeof entry !== 'object') continue;
+    if ((entry as any).type === 'meta') continue;
 
-    const blocks = entry.blocks;
+    const blocks = (entry as any).blocks;
     if (!Array.isArray(blocks)) continue;
 
     const truncatedBlocks: TranscriptBlock[] = blocks.map((b: any) => ({
@@ -165,9 +160,9 @@ export async function getLocalTranscript(sessionId: string): Promise<TranscriptS
     }));
 
     steps.push({
-      id: entry.id ?? `step-${steps.length}`,
-      heading: entry.heading ?? 'Assistant',
-      finished: entry.finished ?? true,
+      id: (entry as any).id ?? `step-${steps.length}`,
+      heading: (entry as any).heading ?? 'Assistant',
+      finished: (entry as any).finished ?? true,
       blocks: truncatedBlocks,
     });
   }
@@ -219,13 +214,11 @@ export function addLocalTranscriptStep(sessionId: string, step: TranscriptStep):
         .then((content) => {
           const lines = content.split('\n');
           if (lines.length === 0) return;
-          try {
-            const meta = JSON.parse(lines[0]);
-            meta.updatedAt = new Date().toISOString();
+          const meta = parseJsonSafe(lines[0]);
+          if (meta && typeof meta === 'object') {
+            (meta as any).updatedAt = new Date().toISOString();
             lines[0] = JSON.stringify(meta);
             return writeFile(filePath, lines.join('\n'), 'utf8');
-          } catch {
-            // malformed meta — skip
           }
         })
         .catch(() => {});
@@ -242,11 +235,13 @@ export function updateLocalSessionTitle(sessionId: string, title: string): void 
     .then((content) => {
       const lines = content.split('\n');
       if (lines.length === 0) return;
-      const meta = JSON.parse(lines[0]);
-      meta.title = title;
-      meta.updatedAt = new Date().toISOString();
-      lines[0] = JSON.stringify(meta);
-      return writeFile(filePath, lines.join('\n'), 'utf8');
+      const meta = parseJsonSafe(lines[0]);
+      if (meta && typeof meta === 'object') {
+        (meta as any).title = title;
+        (meta as any).updatedAt = new Date().toISOString();
+        lines[0] = JSON.stringify(meta);
+        return writeFile(filePath, lines.join('\n'), 'utf8');
+      }
     })
     .catch(() => {});
 }

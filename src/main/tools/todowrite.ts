@@ -1,4 +1,5 @@
 import type { BaseTool, ExecutionContext, ToolCall, ToolInfo, ToolResponse } from './types';
+import { parseToolInput } from '../../shared/utils/json';
 
 export interface TodoItem {
   id: string;
@@ -49,7 +50,14 @@ Usage:
 
   async run(ctx: ExecutionContext, call: ToolCall): Promise<ToolResponse> {
     try {
-      const params = JSON.parse(call.input);
+      const params = parseToolInput<{
+        todos?: Array<{
+          id: string;
+          content: string;
+          status: 'pending' | 'in_progress' | 'completed';
+          priority: 'high' | 'medium' | 'low';
+        }>;
+      }>(call.input);
       const { todos } = params;
 
       if (!Array.isArray(todos)) {

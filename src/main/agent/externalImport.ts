@@ -2,6 +2,7 @@ import type { TranscriptStep } from '../../shared/types';
 import type { ChatMessage } from './types';
 import { getTranscript } from '../history';
 import { isContinuableSession } from '../session/continuations';
+import { parseJsonSafe } from '../../shared/utils/json';
 
 const MAX_IMPORT_CHARS = 48_000;
 const MAX_TOOL_SUMMARY_CHARS = 300;
@@ -12,15 +13,13 @@ interface ImportedTurn {
 }
 
 function describeToolBlock(content: string): string {
-  try {
-    const parsed = JSON.parse(content);
-    if (parsed && typeof parsed === 'object' && typeof parsed.name === 'string') {
-      const input =
-        typeof parsed.input === 'string' ? parsed.input : JSON.stringify(parsed.input ?? '');
-      return `${parsed.name} ${input}`.slice(0, MAX_TOOL_SUMMARY_CHARS);
-    }
-  } catch {
-    // not JSON — already a summary
+  const parsed = parseJsonSafe(content);
+  if (parsed && typeof parsed === 'object' && typeof (parsed as any).name === 'string') {
+    const input =
+      typeof (parsed as any).input === 'string'
+        ? (parsed as any).input
+        : JSON.stringify((parsed as any).input ?? '');
+    return `${(parsed as any).name} ${input}`.slice(0, MAX_TOOL_SUMMARY_CHARS);
   }
   return content.slice(0, MAX_TOOL_SUMMARY_CHARS);
 }

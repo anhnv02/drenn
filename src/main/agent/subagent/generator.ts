@@ -7,6 +7,7 @@ import { readProviders } from '../../config/providerStore';
 import { readSelectedModel, readXiaomiApiKey } from '../../config/settingsStore';
 import { registerAgent, getAgentNames } from './registry';
 import { saveAgent } from './store';
+import { parseJsonSafe } from '../../../shared/utils/json';
 
 const AVAILABLE_TOOLS = [
   'view',
@@ -118,13 +119,9 @@ function extractJson(text: string): Record<string, unknown> | null {
   candidates.push(text);
 
   for (const candidate of candidates) {
-    try {
-      const value = JSON.parse(candidate.trim());
-      if (value && typeof value === 'object' && !Array.isArray(value)) {
-        return value as Record<string, unknown>;
-      }
-    } catch {
-      // try the next candidate
+    const value = parseJsonSafe(candidate.trim());
+    if (value && typeof value === 'object' && !Array.isArray(value)) {
+      return value as Record<string, unknown>;
     }
   }
   return null;

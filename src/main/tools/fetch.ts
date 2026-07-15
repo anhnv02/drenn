@@ -2,6 +2,7 @@ import { lookup } from 'node:dns/promises';
 import { isIP } from 'node:net';
 import type { BaseTool, ExecutionContext, ToolCall, ToolInfo, ToolResponse } from './types';
 import { deniedToolResult, type PermissionService } from '../permission';
+import { parseToolInput } from '../../shared/utils/json';
 
 const MAX_RESPONSE_SIZE = 5 * 1024 * 1024;
 const DEFAULT_TIMEOUT = 60000;
@@ -95,7 +96,11 @@ export class FetchTool implements BaseTool {
 
   async run(ctx: ExecutionContext, call: ToolCall): Promise<ToolResponse> {
     try {
-      const params = JSON.parse(call.input);
+      const params = parseToolInput<{
+        url?: string;
+        format?: string;
+        timeout?: number;
+      }>(call.input, { format: 'markdown', timeout: DEFAULT_TIMEOUT });
       const { url, format = 'markdown', timeout = DEFAULT_TIMEOUT } = params;
 
       if (!url) {

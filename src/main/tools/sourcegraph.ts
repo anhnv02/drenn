@@ -1,4 +1,5 @@
 import type { BaseTool, ExecutionContext, ToolCall, ToolInfo, ToolResponse } from './types';
+import { parseToolInput } from '../../shared/utils/json';
 
 interface SourcegraphParams {
   query: string;
@@ -68,7 +69,7 @@ export class SourcegraphTool implements BaseTool {
   }
 
   async run(_ctx: ExecutionContext, call: ToolCall): Promise<ToolResponse> {
-    const params: SourcegraphParams = JSON.parse(call.input);
+    const params = parseToolInput<SourcegraphParams>(call.input);
 
     if (!params.query) {
       return { content: 'Query parameter is required', isError: true };

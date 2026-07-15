@@ -1,6 +1,7 @@
 import { spawn, ChildProcess } from 'child_process';
 import { EventEmitter } from 'events';
 import type { MCPServer, MCPTool, MCPToolCall, MCPToolResult } from './types';
+import { parseJsonSafe } from '../../shared/utils/json';
 
 export class MCPClient extends EventEmitter {
   private process: ChildProcess | null = null;
@@ -158,19 +159,23 @@ export class MCPClient extends EventEmitter {
       this.buffer = this.buffer.slice(messageStart + contentLength);
 
       try {
-        const message = JSON.parse(content);
-        if (message.id !== undefined) {
-          const handler = this.handlers.get(message.id);
-          if (handler) {
-            this.handlers.delete(message.id);
-            if (message.error) {
-              handler.reject(new Error(message.error.message));
-            } else {
-              handler.resolve(message.result);
+        const message = parseJsonSafe(content);
+        if (message && typeof message === 'object') {
+          if ((message as any).id !== undefined) {
+            const handler = this.handlers.get((message as any).id);
+            if (handler) {
+              this.handlers.delete((message as any).id);
+              if ((message as any).error) {
+                handler.reject(new Error((message as any).error.message));
+              } else {
+                handler.resolve((message as any).result);
+              }
             }
+          } else {
+            this.emit('notification', message);
           }
         } else {
-          this.emit('notification', message);
+          console.error('[MCP] Failed to parse message');
         }
       } catch (err) {
         console.error('Failed to parse MCP message:', err);

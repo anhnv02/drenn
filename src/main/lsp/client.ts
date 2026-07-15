@@ -12,6 +12,7 @@ import type {
   DidChangeTextDocumentParams,
   DidCloseTextDocumentParams,
 } from './protocol';
+import { parseJsonSafe } from '../../shared/utils/json';
 
 export type NotificationHandler = (params: any) => void;
 
@@ -258,11 +259,11 @@ export class LSPClient extends EventEmitter {
         buffer += chunk.toString();
         if (buffer.length >= contentLength) {
           this.process?.stdout?.removeListener('data', onData);
-          try {
-            const message: LSPMessage = JSON.parse(buffer.slice(0, contentLength));
+          const message = parseJsonSafe(buffer.slice(0, contentLength)) as LSPMessage | undefined;
+          if (message) {
             this.processMessage(message);
-          } catch (err) {
-            console.error('Failed to parse LSP message:', err);
+          } else {
+            console.error('[LSP] Failed to parse message');
           }
         }
       };

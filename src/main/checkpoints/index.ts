@@ -1,6 +1,7 @@
 import { promises as fs } from 'fs';
 import { dirname, join } from 'path';
 import { CHECKPOINT_DIR } from '../config/paths';
+import { parseJsonOrDefault } from '../../shared/utils/json';
 
 const MAX_ENTRIES_PER_SESSION = 500;
 
@@ -34,7 +35,7 @@ async function loadSession(sessionId: string): Promise<CheckpointEntry[]> {
   if (inMemory) return inMemory;
   try {
     const raw = await fs.readFile(sessionFile(sessionId), 'utf8');
-    const entries = JSON.parse(raw) as CheckpointEntry[];
+    const entries = parseJsonOrDefault<CheckpointEntry[]>(raw, []);
     bySession.set(sessionId, entries);
     return entries;
   } catch {

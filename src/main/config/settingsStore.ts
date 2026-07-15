@@ -2,6 +2,8 @@ import { promises as fs } from 'fs';
 import type { SelectedModel, PermissionPatternRule } from '../../shared/types';
 import type { MCPServer } from '../mcp/types';
 import { SETTINGS_FILE, MCP_CONFIG_FILE, DRENN_DIR } from './paths';
+import { parseJsonOrDefault } from '../../shared/utils/json';
+import { readJsonFileOrDefault } from '../utils/fileJson';
 
 export interface LSPServerConfig {
   command: string;
@@ -66,7 +68,7 @@ async function readSettingsFile(): Promise<SettingsData> {
   if (settingsCache) return settingsCache;
   try {
     const raw = await fs.readFile(SETTINGS_FILE, 'utf8');
-    settingsCache = { ...DEFAULT_SETTINGS, ...JSON.parse(raw) };
+    settingsCache = { ...DEFAULT_SETTINGS, ...parseJsonOrDefault(raw, {}) };
   } catch {
     settingsCache = { ...DEFAULT_SETTINGS };
   }
@@ -79,7 +81,7 @@ function readSettingsFileSync(): SettingsData {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const fsSync = require('fs');
     const raw = fsSync.readFileSync(SETTINGS_FILE, 'utf8');
-    settingsCache = { ...DEFAULT_SETTINGS, ...JSON.parse(raw) };
+    settingsCache = { ...DEFAULT_SETTINGS, ...parseJsonOrDefault(raw, {}) };
   } catch {
     settingsCache = { ...DEFAULT_SETTINGS };
   }
@@ -167,12 +169,7 @@ let mcpConfigCache: Record<string, MCPServer> | undefined;
 
 export async function readMCPServers(): Promise<Record<string, MCPServer>> {
   if (mcpConfigCache !== undefined) return mcpConfigCache;
-  try {
-    const raw = await fs.readFile(MCP_CONFIG_FILE, 'utf8');
-    mcpConfigCache = JSON.parse(raw) as Record<string, MCPServer>;
-  } catch {
-    mcpConfigCache = {};
-  }
+  mcpConfigCache = await readJsonFileOrDefault<Record<string, MCPServer>>(MCP_CONFIG_FILE, {});
   return mcpConfigCache;
 }
 

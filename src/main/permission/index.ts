@@ -13,6 +13,7 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { homedir } from 'node:os';
 import { runHooks } from '../hooks';
+import { parseJsonSafe } from '../../shared/utils/json';
 
 export type { PermissionService, PermissionDecision } from './types';
 export { deniedToolResult } from './types';
@@ -58,7 +59,7 @@ export class PermissionServiceImpl implements PermissionService {
   private async loadRules(): Promise<void> {
     try {
       const data = await readFile(this.rulesPath, 'utf8');
-      const rules: unknown = JSON.parse(data);
+      const rules = parseJsonSafe(data);
       if (!Array.isArray(rules)) return;
       this.rememberedRules = rules.filter(
         (r): r is RememberedRule =>

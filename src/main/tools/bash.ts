@@ -4,6 +4,7 @@ import type { BaseTool, ExecutionContext, ToolCall, ToolInfo, ToolResponse } fro
 import { deniedToolResult, type PermissionService } from '../permission';
 import { isReadOnlyCommand, splitCommandSegments } from './readOnlyCommands';
 import { startBackgroundShell } from './backgroundShells';
+import { parseToolInput } from '../../shared/utils/json';
 
 const MAX_OUTPUT_LENGTH = 100 * 1024;
 const DEFAULT_TIMEOUT = 30000;
@@ -72,7 +73,11 @@ Committing with git: only commit when the user explicitly asks you to. First run
 
   async run(ctx: ExecutionContext, call: ToolCall): Promise<ToolResponse> {
     try {
-      const params = JSON.parse(call.input);
+      const params = parseToolInput<{
+        command?: string;
+        timeout?: number;
+        run_in_background?: boolean;
+      }>(call.input, { timeout: DEFAULT_TIMEOUT, run_in_background: false });
       const { command, timeout = DEFAULT_TIMEOUT, run_in_background = false } = params;
 
       if (!command) {
